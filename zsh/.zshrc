@@ -20,13 +20,15 @@ MODE_INDICATOR="%B%F{cyan}<%b%f"
 
 export EDITOR=nvim
 
-[ -f ~/.zshrc.local ] && source ~/.zshrc.local
-
 # opencode
 export PATH=/home/jd/.opencode/bin:$PATH
 
 # System update alias
-alias sysup="sudo pacman -Syu --noconfirm && yay -Syu --noconfirm"
+if command -v pacman &> /dev/null; then
+    alias sysup="sudo pacman -Syu --noconfirm && yay -Syu --noconfirm"
+elif command -v apt &> /dev/null; then
+    alias sysup="sudo apt update && sudo apt upgrade -y"
+fi
 
 
 # Added by Antigravity CLI installer
@@ -36,9 +38,8 @@ export PATH="/home/jd/.local/bin:$PATH"
 alias brain='cd ~/code/super-memory && agy --add-dir ~/code/skills --add-dir ~/code/dotfiles -i "load context"'
 
 # fzf integration (Fuzzy finder)
-if [ -f /usr/share/fzf/key-bindings.zsh ]; then
-    source /usr/share/fzf/key-bindings.zsh
-    source /usr/share/fzf/completion.zsh
+if command -v fzf &> /dev/null; then
+    source <(fzf --zsh)
 fi
 
 # zoxide integration (Smart cd)
@@ -54,3 +55,6 @@ bindkey '^e' end-of-line
 alias vpn-on='sudo tailscale set --exit-node=100.76.23.30'
 alias vpn-off='sudo tailscale set --exit-node='
 alias agy="agy --dangerously-skip-permissions"
+
+# Machine-specific overrides, not tracked in dots
+[ -f ~/.zshrc.local ] && source ~/.zshrc.local
